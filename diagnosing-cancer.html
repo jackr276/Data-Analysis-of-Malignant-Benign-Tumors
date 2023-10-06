@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="generator" content="quarto-0.9.80">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Lab 8: Diagnosing Cancer</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+
+  <script src="diagnosing-cancer_files/libs/clipboard/clipboard.min.js"></script>
+  <script src="diagnosing-cancer_files/libs/quarto-html/quarto.js"></script>
+  <script src="diagnosing-cancer_files/libs/quarto-html/popper.min.js"></script>
+  <script src="diagnosing-cancer_files/libs/quarto-html/tippy.umd.min.js"></script>
+  <script src="diagnosing-cancer_files/libs/quarto-html/anchor.min.js"></script>
+  <link href="diagnosing-cancer_files/libs/quarto-html/tippy.css" rel="stylesheet">
+  <link href="diagnosing-cancer_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+  <script src="diagnosing-cancer_files/libs/bootstrap/bootstrap.min.js"></script>
+  <link href="diagnosing-cancer_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+  <link href="diagnosing-cancer_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body class="fullcontent">
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+<header id="title-block-header" class="quarto-title-block default">
+
+<div class="quarto-title"><h1 class="title display-7">Lab 8: Diagnosing Cancer</h1></div></header>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Instructor: Jack Robbins</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#Student: Redacted</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># load data and set "B" (benign) as the reference level</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>cells <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://www.dropbox.com/s/0rbzonyrzramdgl/cells.csv?dl=1"</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">diagnosis =</span> <span class="fu">factor</span>(diagnosis, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"B"</span>, <span class="st">"M"</span>)))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The diagnosis is in the column named <code>diagnosis</code>; each other column should be used to predict the diagnosis.</p>
+<section id="understanding-and-exploring-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-and-exploring-the-data">Understanding and Exploring the Data</h3>
+<section id="question-1" class="level4">
+<h4 class="anchored" data-anchor-id="question-1">Question 1</h4>
+<p>What is the unit of observation in this data frame?</p>
+<p>Benign/malignant</p>
+</section>
+<section id="question-2" class="level4">
+<h4 class="anchored" data-anchor-id="question-2">Question 2</h4>
+<p>Use a box plot to compare the <code>radius_mean</code> for benign vs.&nbsp;malignant biopsies. What is the takeaway from this plot? ::: {.cell}</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(radius_mean <span class="sc">~</span> diagnosis,</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> cells,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizontal =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Mean Radius By Diagnosis"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Mean Radius"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Diagnosis"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="diagnosing-cancer_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="672"></p>
+</div>
+<p>::: Based on this boxplot, malignant tumors have a larger mean radius. We will keep this in mind when doing our regression later.</p>
+</section>
+<section id="question-3" class="level4">
+<h4 class="anchored" data-anchor-id="question-3">Question 3</h4>
+<p>Select another variable that you suspect might be a good predictor of the diagnosis. Build a plot to illustrate their association and provide an interpretation of what the plot shows. ::: {.cell}</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(texture_mean <span class="sc">~</span> diagnosis,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> cells,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">horizontal =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Mean Texture By Diagnosis"</span>,</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Mean Texture"</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Diagnosis"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="diagnosing-cancer_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="672"></p>
+</div>
+<p>::: The mean texture is higher for malignant tumors than benign ones. Benign have many more outliers than malignant ones.</p>
+</section>
+<section id="question-4" class="level4">
+<h4 class="anchored" data-anchor-id="question-4">Question 4</h4>
+<p>Make a plot that examines the association between two predictors, <code>radius_mean</code> and <code>area_mean</code>, and calculate the pearson correlation coefficient between these them. How would you describe the strength and shape of their association? What might cause this shape? ::: {.cell}</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>cells <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>radius_mean, <span class="at">y=</span>area_mean)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>()<span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Mean Radius"</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Mean Area"</span>) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Mean Area VS. Mean Radius"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="diagnosing-cancer_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(cells<span class="sc">$</span>radius_mean, cells<span class="sc">$</span>area_mean)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.9873572</code></pre>
+</div>
+<p>::: The Mean Radius and Mean Area are very strongly linearly correlated, with a correlation coefficient of 0.98. This happens because, usually, for symmetrical tumors, the area and radius are directly related.</p>
+</section>
+<section id="question-5" class="level4">
+<h4 class="anchored" data-anchor-id="question-5">Question 5</h4>
+<p>Make a single plot that examines the association between <code>radius_mean</code> and <code>radius_sd</code> separately for each diagnosis (hint: <code>aes()</code> should have three arguments). Calculate the correlation between these two variables for each diagnosis.</p>
+<pre><code>Give an interpretation of these results. In particular comment on
+
+- Is the relationship between `radius_mean` and `radius_sd` different for benign biopsies vs. malignant biopsies?
+
+- If so, can you give an explanation for this difference?</code></pre>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>cells <span class="sc">%&gt;%</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>radius_mean, <span class="at">y=</span>radius_sd, <span class="at">color =</span> diagnosis)) <span class="sc">+</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Radius Mean"</span>) <span class="sc">+</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Radius Standard Deviation"</span>)<span class="sc">+</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Standard deviation vs. Mean of Radius"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="diagnosing-cancer_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>benign <span class="ot">&lt;-</span> <span class="fu">filter</span>(cells, diagnosis <span class="sc">==</span> <span class="st">"B"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>malignant <span class="ot">&lt;-</span> <span class="fu">filter</span>(cells, diagnosis <span class="sc">==</span> <span class="st">"M"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(benign<span class="sc">$</span>radius_mean, benign<span class="sc">$</span>radius_sd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] -0.02776108</code></pre>
+</div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cor</span>(malignant<span class="sc">$</span>radius_mean, malignant<span class="sc">$</span>radius_sd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 0.6392697</code></pre>
+</div>
+</div>
+<p>Benign tumors have a much lower standard deviation than malignant. As we can see via the correlation coefficients, there is a difference for malignant vs.&nbsp; benign. For benign tumors, the correlation coefficient of -0.03 suggests that there is no relationship between the radius mean and radius standard deviation for benign tumors. On the other hand, the correlation coefficient of 0.63 for malignant tumors, suggests that there is a moderate, positive, linear correlation between mean radius and radius standard deviation for malignant tumors. Malignant tumors are more irregularly shaped, and therefore would have a higher radius standard deviation.</p>
+</section>
+</section>
+<section id="diagnosing-biopsies" class="level3">
+<h3 class="anchored" data-anchor-id="diagnosing-biopsies">Diagnosing Biopsies</h3>
+<section id="question-6" class="level4">
+<h4 class="anchored" data-anchor-id="question-6">Question 6</h4>
+<p>Split the full cells data set into a roughly 80-20 train-test set split. How many observations do you have in each? ::: {.cell}</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5012023</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>set_type <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="at">x=</span><span class="fu">c</span>(<span class="st">"train"</span>, <span class="st">"test"</span>),</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>                    <span class="at">size =</span> <span class="dv">569</span>,</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>                    <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>                    <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.79</span>, <span class="fl">0.21</span>))</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>cells <span class="ot">&lt;-</span> cells <span class="sc">%&gt;%</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>                <span class="fu">mutate</span>(<span class="at">set_type =</span> set_type)</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>cells_train <span class="ot">&lt;-</span> cells <span class="sc">%&gt;%</span> <span class="fu">filter</span>(set_type <span class="sc">==</span> <span class="st">'train'</span>)</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>cells_test <span class="ot">&lt;-</span> cells <span class="sc">%&gt;%</span> <span class="fu">filter</span>(set_type <span class="sc">==</span> <span class="st">'test'</span>)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cells_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 436  32</code></pre>
+</div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cells_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 133  32</code></pre>
+</div>
+<p>:::</p>
+</section>
+<section id="question-7" class="level4">
+<h4 class="anchored" data-anchor-id="question-7">Question 7</h4>
+<p>Using the training data, fit a simple logistic regression model that predicts the diagnosis using the mean of the texture index using a threshold of .5. What would your model predict for a biopsy with a mean texture of 15? What probability does it assign to that outcome? ::: {.cell}</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># are we going to have to adjust texture mean logarithmically?</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>p_texture_mean <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(cells, <span class="fu">aes</span>(<span class="at">x=</span>compactness_mean, <span class="at">fill=</span>diagnosis))<span class="sc">+</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>                <span class="fu">geom_density</span>(<span class="at">alpha=</span><span class="fl">0.4</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>p_texture_mean</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="diagnosing-cancer_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>model1 <span class="ot">&lt;-</span> <span class="fu">glm</span>(diagnosis <span class="sc">~</span> texture_mean, <span class="at">data =</span> cells_train, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>model1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>
+Call:  glm(formula = diagnosis ~ texture_mean, family = "binomial", 
+    data = cells_train)
+
+Coefficients:
+ (Intercept)  texture_mean  
+     -5.0861        0.2381  
+
+Degrees of Freedom: 435 Total (i.e. Null);  434 Residual
+Null Deviance:      583.1 
+Residual Deviance: 498.3    AIC: 502.3</code></pre>
+</div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>p_hat_model1 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, cells_train, <span class="at">type =</span> <span class="st">'response'</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>prediction <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">y=</span>cells_train<span class="sc">$</span>diagnosis) <span class="sc">%&gt;%</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">p_hat_model1 =</span> p_hat_model1,</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y_hat_model1 =</span> p_hat_model1 <span class="sc">&gt;</span> <span class="fl">0.5</span>,</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">misclassified =</span> (y <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> y_hat_model1 <span class="sc">==</span> <span class="cn">FALSE</span>) <span class="sc">|</span> </span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>                       (y <span class="sc">==</span> <span class="st">"B"</span> <span class="sc">&amp;</span> y_hat_model1 <span class="sc">==</span> <span class="cn">TRUE</span>) )</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>prediction</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code># A tibble: 436 × 4
+   y     p_hat_model1 y_hat_model1 misclassified
+   &lt;fct&gt;        &lt;dbl&gt; &lt;lgl&gt;        &lt;lgl&gt;        
+ 1 M           0.0682 FALSE        TRUE         
+ 2 M           0.298  FALSE        TRUE         
+ 3 M           0.493  FALSE        TRUE         
+ 4 M           0.442  FALSE        TRUE         
+ 5 M           0.158  FALSE        TRUE         
+ 6 M           0.206  FALSE        TRUE         
+ 7 M           0.419  FALSE        TRUE         
+ 8 M           0.469  FALSE        TRUE         
+ 9 M           0.527  TRUE         FALSE        
+10 M           0.654  TRUE         FALSE        
+# … with 426 more rows</code></pre>
+</div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>newdata <span class="ot">=</span> <span class="fu">data.frame</span>(<span class="at">texture_mean =</span> <span class="dv">15</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">predict</span>(model1, newdata, <span class="at">type=</span><span class="st">'response'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>        1 
+0.1803066 </code></pre>
+</div>
+<p>::: The model says that there is an 18% chance it is malignant. Therefore it classified the observation as benign.</p>
+</section>
+<section id="question-8" class="level4">
+<h4 class="anchored" data-anchor-id="question-8">Question 8</h4>
+<p>Calculate the misclassification rate first on the training data and then on the testing data. Is there any evidence that this model is overfitting? How can you tell one way or the other? ::: {.cell}</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating misclassification for the training data</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>num_miss <span class="ot">&lt;-</span> <span class="fu">sum</span>(prediction<span class="sc">$</span>misclassified, <span class="at">na.rm =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cells_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 436  32</code></pre>
+</div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="dv">100</span><span class="sc">*</span>(num_miss <span class="sc">/</span> <span class="dv">451</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 28.38137</code></pre>
+</div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="do">###############################################################################</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>p_hat_model2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, cells_test, <span class="at">type =</span> <span class="st">'response'</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>prediction2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">y=</span>cells_test<span class="sc">$</span>diagnosis) <span class="sc">%&gt;%</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">p_hat_model2 =</span> p_hat_model2,</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y_hat_model2 =</span> p_hat_model2 <span class="sc">&gt;</span> <span class="fl">0.5</span>,</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">misclassified =</span> (y <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> y_hat_model2 <span class="sc">==</span> <span class="cn">FALSE</span>) <span class="sc">|</span> </span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>                       (y <span class="sc">==</span> <span class="st">"B"</span> <span class="sc">&amp;</span> y_hat_model2 <span class="sc">==</span> <span class="cn">TRUE</span>))</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>num_miss2 <span class="ot">&lt;-</span> <span class="fu">sum</span>(prediction2<span class="sc">$</span>misclassified, <span class="at">na.rm =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cells_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 133  32</code></pre>
+</div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="dv">100</span><span class="sc">*</span>(num_miss2 <span class="sc">/</span> <span class="dv">118</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 28.81356</code></pre>
+</div>
+<p>::: Training Data: 27.5% Misclassification Rate Testing Data: 35.5% Misclassification Rate</p>
+<p>There is some evidence that this model is overfitting. We can tell because the misclassification rate for the training data is a few percentage points lower than that of the testing data.</p>
+</section>
+<section id="question-9" class="level4">
+<h4 class="anchored" data-anchor-id="question-9">Question 9</h4>
+<p>Build a more complex model to predict the diagnosis using five predictors of your choosing, then calculate the testing and training misclassification rate. Is there evidence that your model is overfitting? How can you tell one way or the other? ::: {.cell}</p>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>model2 <span class="ot">&lt;-</span> <span class="fu">glm</span>(diagnosis <span class="sc">~</span> texture_mean <span class="sc">+</span> radius_mean <span class="sc">+</span> radius_sd <span class="sc">+</span> perimeter_mean</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>              <span class="sc">+</span> compactness_mean, <span class="at">data =</span> cells_train, <span class="at">family =</span> <span class="st">"binomial"</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>model2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>
+Call:  glm(formula = diagnosis ~ texture_mean + radius_mean + radius_sd + 
+    perimeter_mean + compactness_mean, family = "binomial", data = cells_train)
+
+Coefficients:
+     (Intercept)      texture_mean       radius_mean         radius_sd  
+       -23.36242           0.21376           0.88110           4.24471  
+  perimeter_mean  compactness_mean  
+         0.01218          34.33455  
+
+Degrees of Freedom: 435 Total (i.e. Null);  430 Residual
+Null Deviance:      583.1 
+Residual Deviance: 148.9    AIC: 160.9</code></pre>
+</div>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>p_hat_model3 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model2, cells_train, <span class="at">type =</span> <span class="st">'response'</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>prediction3 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">y=</span>cells_train<span class="sc">$</span>diagnosis) <span class="sc">%&gt;%</span></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">p_hat_model3 =</span> p_hat_model3,</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y_hat_model3 =</span> p_hat_model3 <span class="sc">&gt;</span> <span class="fl">0.5</span>,</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">misclassified =</span> (y <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> y_hat_model3 <span class="sc">==</span> <span class="cn">FALSE</span>) <span class="sc">|</span> </span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>                       (y <span class="sc">==</span> <span class="st">"B"</span> <span class="sc">&amp;</span> y_hat_model3 <span class="sc">==</span> <span class="cn">TRUE</span>) )</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>prediction3</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code># A tibble: 436 × 4
+   y     p_hat_model3 y_hat_model3 misclassified
+   &lt;fct&gt;        &lt;dbl&gt; &lt;lgl&gt;        &lt;lgl&gt;        
+ 1 M            1.00  TRUE         FALSE        
+ 2 M            0.994 TRUE         FALSE        
+ 3 M            1.00  TRUE         FALSE        
+ 4 M            0.979 TRUE         FALSE        
+ 5 M            0.999 TRUE         FALSE        
+ 6 M            0.316 FALSE        TRUE         
+ 7 M            0.983 TRUE         FALSE        
+ 8 M            0.916 TRUE         FALSE        
+ 9 M            0.853 TRUE         FALSE        
+10 M            0.963 TRUE         FALSE        
+# … with 426 more rows</code></pre>
+</div>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculating misclassification for the training data</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>num_miss3 <span class="ot">&lt;-</span> <span class="fu">sum</span>(prediction3<span class="sc">$</span>misclassified, <span class="at">na.rm =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cells_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 436  32</code></pre>
+</div>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="dv">100</span><span class="sc">*</span>(num_miss3 <span class="sc">/</span> <span class="dv">451</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 7.317073</code></pre>
+</div>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="do">###############################################################################</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>p_hat_model4 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model2, cells_test, <span class="at">type =</span> <span class="st">'response'</span>)</span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>prediction4 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">y=</span>cells_test<span class="sc">$</span>diagnosis) <span class="sc">%&gt;%</span></span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">p_hat_model4 =</span> p_hat_model4,</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y_hat_model4 =</span> p_hat_model4 <span class="sc">&gt;</span> <span class="fl">0.5</span>,</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>                     <span class="at">misclassified =</span> (y <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> y_hat_model4 <span class="sc">==</span> <span class="cn">FALSE</span>) <span class="sc">|</span> </span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a>                       (y <span class="sc">==</span> <span class="st">"B"</span> <span class="sc">&amp;</span> y_hat_model4 <span class="sc">==</span> <span class="cn">TRUE</span>) )</span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a>num_miss4 <span class="ot">&lt;-</span> <span class="fu">sum</span>(prediction4<span class="sc">$</span>misclassified, <span class="at">na.rm =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cells_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 133  32</code></pre>
+</div>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="dv">100</span><span class="sc">*</span>(num_miss4 <span class="sc">/</span> <span class="dv">118</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 11.86441</code></pre>
+</div>
+<p>::: The disparity in the misclassification rates still shows some evidence of overfitting, but it less than our original model.</p>
+</section>
+<section id="question-10" class="level4">
+<h4 class="anchored" data-anchor-id="question-10">Question 10</h4>
+<p>If you were to deploy your method in a clinical setting to help diagnose cancer, which type of classification error would be worse and why?</p>
+<p>It would be worse if the model classified a tumor as benign while the tumor was actually malignant(false negative). This would be worse because the patient would subsequently not get the appropriate treatment for a malignant tumor.</p>
+</section>
+<section id="question-11" class="level4">
+<h4 class="anchored" data-anchor-id="question-11">Question 11</h4>
+<p>Calculate the total number of false negatives in the test data set when using your simple model with only one variable. ::: {.cell}</p>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>prediction2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code># A tibble: 133 × 4
+   y     p_hat_model2 y_hat_model2 misclassified
+   &lt;fct&gt;        &lt;dbl&gt; &lt;lgl&gt;        &lt;lgl&gt;        
+ 1 M            0.574 TRUE         FALSE        
+ 2 B            0.107 FALSE        FALSE        
+ 3 M            0.434 FALSE        TRUE         
+ 4 M            0.514 TRUE         FALSE        
+ 5 M            0.521 TRUE         FALSE        
+ 6 M            0.513 TRUE         FALSE        
+ 7 M            0.499 FALSE        TRUE         
+ 8 M            0.539 TRUE         FALSE        
+ 9 M            0.514 TRUE         FALSE        
+10 B            0.176 FALSE        FALSE        
+# … with 123 more rows</code></pre>
+</div>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># looking for y = M but y_hat_model1 = False or p_hat_model1 &lt;= 0.5</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>malignant_pred <span class="ot">&lt;-</span> prediction2 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(y <span class="sc">==</span> <span class="st">"M"</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(malignant_pred<span class="sc">$</span>misclassified, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 16</code></pre>
+</div>
+<p>::: There are 17 false negatives when the model predicts based on the testing predictions.</p>
+</section>
+<section id="question-12" class="level4">
+<h4 class="anchored" data-anchor-id="question-12">Question 12</h4>
+<p>What can you change about your classification rule to lower the number of false negatives? Make this change and calculate the new number of false negatives.</p>
+<p>We can try lowering our thresh-hold to 0.35. This will lower the number of false negatives. ::: {.cell}</p>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>p_hat_model2 <span class="ot">&lt;-</span> <span class="fu">predict</span>(model1, cells_test, <span class="at">type =</span> <span class="st">'response'</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>prediction2 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">y=</span>cells_test<span class="sc">$</span>diagnosis) <span class="sc">%&gt;%</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>              <span class="fu">mutate</span>(<span class="at">p_hat_model2 =</span> p_hat_model2,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>                     <span class="at">y_hat_model2 =</span> p_hat_model2 <span class="sc">&gt;</span> <span class="fl">0.35</span>,</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>                     <span class="at">misclassified =</span> (y <span class="sc">==</span> <span class="st">"M"</span> <span class="sc">&amp;</span> y_hat_model2 <span class="sc">==</span> <span class="cn">FALSE</span>) <span class="sc">|</span> </span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>                       (y <span class="sc">==</span> <span class="st">"B"</span> <span class="sc">&amp;</span> y_hat_model2 <span class="sc">==</span> <span class="cn">TRUE</span>))</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>prediction2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code># A tibble: 133 × 4
+   y     p_hat_model2 y_hat_model2 misclassified
+   &lt;fct&gt;        &lt;dbl&gt; &lt;lgl&gt;        &lt;lgl&gt;        
+ 1 M            0.574 TRUE         FALSE        
+ 2 B            0.107 FALSE        FALSE        
+ 3 M            0.434 TRUE         FALSE        
+ 4 M            0.514 TRUE         FALSE        
+ 5 M            0.521 TRUE         FALSE        
+ 6 M            0.513 TRUE         FALSE        
+ 7 M            0.499 TRUE         FALSE        
+ 8 M            0.539 TRUE         FALSE        
+ 9 M            0.514 TRUE         FALSE        
+10 B            0.176 FALSE        FALSE        
+# … with 123 more rows</code></pre>
+</div>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>malignant_pred2 <span class="ot">&lt;-</span> prediction2 <span class="sc">%&gt;%</span> <span class="fu">filter</span>(y <span class="sc">==</span> <span class="st">"M"</span>)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>malignant_pred2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code># A tibble: 42 × 4
+   y     p_hat_model2 y_hat_model2 misclassified
+   &lt;fct&gt;        &lt;dbl&gt; &lt;lgl&gt;        &lt;lgl&gt;        
+ 1 M            0.574 TRUE         FALSE        
+ 2 M            0.434 TRUE         FALSE        
+ 3 M            0.514 TRUE         FALSE        
+ 4 M            0.521 TRUE         FALSE        
+ 5 M            0.513 TRUE         FALSE        
+ 6 M            0.499 TRUE         FALSE        
+ 7 M            0.539 TRUE         FALSE        
+ 8 M            0.514 TRUE         FALSE        
+ 9 M            0.651 TRUE         FALSE        
+10 M            0.700 TRUE         FALSE        
+# … with 32 more rows</code></pre>
+</div>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(malignant_pred2<span class="sc">$</span>misclassified, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<p>:::</p>
+</section>
+<section id="question-13" class="level4">
+<h4 class="anchored" data-anchor-id="question-13">Question 13</h4>
+<p>Calculate the testing misclassification rate using your new classification rule. Did it go up or down? Why? ::: {.cell}</p>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>num_miss5 <span class="ot">&lt;-</span> <span class="fu">sum</span>(prediction2<span class="sc">$</span>misclassified, <span class="at">na.rm =</span> <span class="cn">TRUE</span> )</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">dim</span>(cells_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 133  32</code></pre>
+</div>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r cell-code code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="dv">100</span><span class="sc">*</span>(num_miss5 <span class="sc">/</span> <span class="dv">118</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-stdout">
+<pre><code>[1] 32.20339</code></pre>
+</div>
+<p>::: It went down. This could be the case because it could be much more likely to have a false negative as opposed to a false positive. So, lowering the number of false negatives could lower the misclassification rate overall.</p>
+</section>
+</section>
+</main>
+<!-- /main column -->
+<script type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    setTimeout(function() {
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+</body></html>
